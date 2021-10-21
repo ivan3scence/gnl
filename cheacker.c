@@ -10,7 +10,7 @@ int main()
 	char *s;
 	int fd;
 	//int i=9;
-	fd = open("1.txt", O_RDONLY);
+	fd = open("simple", O_RDONLY);
 	s = get_next_line(fd);
 	while (s)
 	{
@@ -19,8 +19,16 @@ int main()
 		s = get_next_line(fd);
 	}
 	free(s);
-	while (1)
-		;
+
+
+	//s = malloc(0);
+	//printf("%s\n%p\n",s, s);
+	//printf("%d\n", s[0]);
+	//printf("%d\n", s[1]);
+
+
+	// while (1)
+	// 	;
 
 	//int i=6;
 	//char c;
@@ -28,3 +36,12 @@ int main()
 	//while (i--)
 	//	printf("%zd, %d\n", read(fd, &c, 1), c);
 }
+
+
+//int main()
+//{
+//	char *s;
+//
+//	s = get_next_line(0);
+//	printf("%s", s);
+//}

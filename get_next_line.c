@@ -1,56 +1,72 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/21 17:58:08 by sdonny            #+#    #+#             */
+/*   Updated: 2021/10/21 17:58:18 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-
-
-#include <stdio.h>
-
-char *get_next_line_input(void)
+static char	*ft_rebuf(char *buf, int i)
 {
-	return (0);
+	int		n;
+	char	*new_buf;
+
+	n = -1;
+	new_buf = (char *)malloc(sizeof(char) * (i + BUFFER_SIZE));
+	if (!new_buf)
+		return (0);
+	while (++n < i)
+		new_buf[n] = buf[n];
+	free(buf);
+	buf = new_buf;
+	return (buf);
 }
 
-char *get_next_line_fd(int fd)
+char	*get_next_line_fd(int fd, int ii, int i)
 {
-	char *buf;
-	int  i;
-	char c;
+	static char	*buf;
 
-	if (read(fd, &c, 1) != 1)
-		return (0);
-	i = 0;
-	buf = (char *)malloc(sizeof(char) * BUFFER_SIZE);
+	buf = (char *)malloc(sizeof(char) * ii);
 	if (!buf)
 		return (0);
-	buf[i++] = c;
 	while (read(fd, &buf[i], 1) == 1)
 	{
-		if (buf[i] == '\n')
+		if (i + 1 >= ii)
 		{
-			buf[++i] = '\0';
-			if (ft_strlen(buf))
-			{
-				printf("%s", buf);
-				return (buf);
-			}
+			buf = ft_rebuf(buf, ii);
+			ii += BUFFER_SIZE;
+			if (!buf)
+				return (0);
 		}
-		i++;
+		if (buf[i++] == '\n')
+			break ;
+	}
+	if (!i)
+	{
+		free(buf);
+		return (0);
 	}
 	buf[i] = '\0';
-	if (ft_strlen(buf))
-		return (buf);
-	printf("qwe");
-	free(buf);
-	return (0);
+	return (buf);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	if (!fd)
+	int	buf_size;
+	int	i;
+
+	i = 0;
+	buf_size = BUFFER_SIZE;
+	if (BUFFER_SIZE <= 0)
 		return (0);
 	if (fd < 0)
 		return (0);
-	if (fd == 0)
-		return (get_next_line_input());
 	else
-		return (get_next_line_fd(fd));
+		return (get_next_line_fd(fd, buf_size, i));
 }
